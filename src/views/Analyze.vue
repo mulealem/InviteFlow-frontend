@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import { apiFetch } from "../utils/api";
 export default {
   name: "AnalyzeView",
   data() {
@@ -65,7 +66,7 @@ export default {
       }
       fd.append("template", f);
       try {
-        const res = await fetch("/analyze-template", {
+        const res = await apiFetch("/analyze-template", {
           method: "POST",
           body: fd,
         });

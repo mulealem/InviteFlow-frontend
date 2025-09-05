@@ -166,8 +166,6 @@
             </div>
           </v-card-text>
         </v-card>
-
-        
       </v-col>
 
       <v-col cols="12" class="mt-4">
@@ -206,6 +204,7 @@
 
 <script>
 import TemplateGallery from "../components/TemplateGallery.vue";
+import { apiFetch, apiUrl } from "../utils/api";
 export default {
   name: "AppFlow",
   components: { TemplateGallery },
@@ -315,11 +314,11 @@ export default {
     },
     openView() {
       if (!this.scanned) return alert("No token");
-      window.open(`/view/${this.scanned}`, "_blank");
+      window.open(apiUrl(`/view/${this.scanned}`), "_blank");
     },
     async downloadPDF() {
       if (!this.scanned) return alert("No token");
-      const r = await fetch(`/view/${this.scanned}/file`);
+      const r = await apiFetch(`/view/${this.scanned}/file`);
       if (!r.ok) {
         const t = await r.text();
         return alert(`Failed: ${r.status} ${t}`);
@@ -347,7 +346,7 @@ export default {
       const fd = new FormData();
       fd.append("template", f);
       try {
-        const res = await fetch("/analyze-template", {
+        const res = await apiFetch("/analyze-template", {
           method: "POST",
           body: fd,
         });
@@ -375,7 +374,7 @@ export default {
       fd.append("template", t);
       fd.append("csvFile", c);
       try {
-        const res = await fetch("/generate-documents", {
+        const res = await apiFetch("/generate-documents", {
           method: "POST",
           body: fd,
         });
@@ -392,7 +391,7 @@ export default {
       const id = this.gResult?.mergedDocumentId;
       if (!id) return;
       const a = document.createElement("a");
-      a.href = `/download/${id}?filename=merged-documents`;
+      a.href = apiUrl(`/download/${id}?filename=merged-documents`);
       a.download = "merged-documents.pdf";
       document.body.appendChild(a);
       a.click();
@@ -403,7 +402,7 @@ export default {
       const id = this.gResult?.batchId;
       if (!id) return;
       try {
-        const resp = await fetch(`/batches/${id}/zip`);
+        const resp = await apiFetch(`/batches/${id}/zip`);
         if (!resp.ok) {
           const t = await resp.text();
           return alert(`Zip failed: ${resp.status} ${t}`);

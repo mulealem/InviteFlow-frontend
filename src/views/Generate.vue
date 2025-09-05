@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import { apiFetch, apiUrl } from "../utils/api";
 export default {
   name: "GenerateView",
   data() {
@@ -86,7 +87,7 @@ export default {
       fd.append("template", t);
       fd.append("csvFile", c);
       try {
-        const res = await fetch("/generate-documents", {
+        const res = await apiFetch("/generate-documents", {
           method: "POST",
           body: fd,
         });
@@ -103,7 +104,7 @@ export default {
       const id = this.result?.mergedDocumentId;
       if (!id) return;
       const a = document.createElement("a");
-      a.href = `/download/${id}?filename=merged-documents`;
+      a.href = apiUrl(`/download/${id}?filename=merged-documents`);
       a.download = `merged-documents.pdf`;
       document.body.appendChild(a);
       a.click();
@@ -114,7 +115,7 @@ export default {
       const batchId = this.result?.batchId;
       if (!batchId) return;
       try {
-        const resp = await fetch(`/batches/${batchId}/zip`);
+        const resp = await apiFetch(`/batches/${batchId}/zip`);
         if (!resp.ok) {
           const t = await resp.text();
           return alert(`Zip failed: ${resp.status} ${t}`);

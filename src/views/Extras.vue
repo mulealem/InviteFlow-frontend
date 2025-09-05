@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import { apiFetch, apiUrl } from "../utils/api";
 export default {
   name: "ExtrasView",
   data() {
@@ -70,7 +71,7 @@ export default {
     downloadMerged() {
       if (!this.mergedId) return alert("enter id");
       window.open(
-        `/download/${this.mergedId}?filename=merged-documents`,
+        apiUrl(`/download/${this.mergedId}?filename=merged-documents`),
         "_blank"
       );
     },
@@ -78,7 +79,7 @@ export default {
       this.zipLoading = true;
       if (!this.batchId) return alert("enter batchId");
       try {
-        const resp = await fetch(`/batches/${this.batchId}/zip`);
+        const resp = await apiFetch(`/batches/${this.batchId}/zip`);
         if (!resp.ok) {
           const t = await resp.text();
           return alert(`Zip failed: ${resp.status} ${t}`);
@@ -98,11 +99,11 @@ export default {
     },
     openView() {
       if (!this.token) return alert("enter token");
-      window.open(`/view/${this.token}`, "_blank");
+      window.open(apiUrl(`/view/${this.token}`), "_blank");
     },
     async downloadQR() {
       if (!this.token) return alert("enter token");
-      const resp = await fetch(`/view/${this.token}/file`);
+      const resp = await apiFetch(`/view/${this.token}/file`);
       if (!resp.ok) {
         const t = await resp.text();
         return alert(`Download failed: ${resp.status} ${t}`);
